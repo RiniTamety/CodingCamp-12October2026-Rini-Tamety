@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <span class="logo-icon">✦</span>
+        <span class="logo-text">Life Dashboard</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <!-- Greeting -->
+      <div class="greeting-wrap">
+        <p class="greeting-text" id="greeting-text">Good morning!</p>
+        <p class="greeting-name" id="greeting-name"></p>
+        <div class="date-time" id="datetime"></div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Custom name button -->
+      <button class="btn-icon header-btn" id="set-name-btn" title="Set your name">👤</button>
+      <!-- Light/Dark toggle -->
+      <button class="btn-icon header-btn theme-toggle" id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+      <!-- Progress -->
+      <div class="progress-summary">
+        <span id="summary-text">0 of 0 tasks done</span>
+        <div class="mini-progress">
+          <div class="mini-progress-bar" id="mini-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Name modal -->
+  <div class="modal-overlay hidden" id="name-modal">
+    <div class="modal-box">
+      <h3 class="modal-title">What's your name?</h3>
+      <input type="text" class="input-field" id="name-input" placeholder="Enter your name…" maxlength="30" />
+      <div class="form-actions">
+        <button class="btn-primary" id="name-save-btn">Save</button>
+        <button class="btn-ghost"   id="name-cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN LAYOUT
+  ══════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- ── LEFT COLUMN ── -->
+    <aside class="left-col">
+
+      <!-- Focus Timer -->
+      <section class="card timer-card">
+        <h2 class="card-title">Focus Timer</h2>
+        <div class="timer-display" id="timer-display">25:00</div>
+        <div class="timer-label" id="timer-label">Ready to focus</div>
+        <div class="timer-controls">
+          <button class="btn-primary" id="timer-start-btn">▶ Start</button>
+          <button class="btn-ghost"   id="timer-stop-btn">⏸ Pause</button>
+          <button class="btn-ghost"   id="timer-reset-btn">↺ Reset</button>
+        </div>
+        <div class="timer-presets">
+          <button class="preset-btn active" data-min="25">25 min</button>
+          <button class="preset-btn" data-min="10">10 min</button>
+          <button class="preset-btn" data-min="5">5 min</button>
+        </div>
+      </section>
+
+      <!-- Mood Tracker -->
+      <section class="card mood-card">
+        <h2 class="card-title">How are you feeling?</h2>
+        <div class="mood-grid">
+          <button class="mood-btn" data-mood="amazing" title="Amazing">🤩</button>
+          <button class="mood-btn" data-mood="happy"   title="Happy">😊</button>
+          <button class="mood-btn" data-mood="neutral" title="Neutral">😐</button>
+          <button class="mood-btn" data-mood="tired"   title="Tired">😴</button>
+          <button class="mood-btn" data-mood="sad"     title="Sad">😢</button>
+          <button class="mood-btn" data-mood="stressed" title="Stressed">😤</button>
+        </div>
+        <p class="mood-label" id="mood-label">Pick a mood to log your day</p>
+      </section>
+
+      <!-- Daily Quote -->
+      <section class="card quote-card">
+        <div class="quote-icon">❝</div>
+        <p class="quote-text"   id="quote-text"></p>
+        <p class="quote-author" id="quote-author"></p>
+        <button class="btn-text" id="new-quote-btn">New quote →</button>
+      </section>
+
+      <!-- Habit Tracker -->
+      <section class="card habit-card">
+        <div class="card-header">
+          <h2 class="card-title">Daily Habits</h2>
+          <button class="btn-icon" id="add-habit-btn" title="Add habit">+</button>
+        </div>
+        <ul class="habit-list" id="habit-list"></ul>
+        <div class="add-form hidden" id="habit-form">
+          <input type="text" class="input-field" id="habit-input" placeholder="New habit name…" maxlength="40" />
+          <div class="form-actions">
+            <button class="btn-primary small" id="habit-save-btn">Add</button>
+            <button class="btn-ghost   small" id="habit-cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ── CENTER COLUMN ── -->
+    <section class="center-col">
+
+      <!-- Today's Focus (text) -->
+      <section class="card focus-card">
+        <h2 class="card-title">Today's Focus</h2>
+        <p class="focus-sub">What's the ONE thing that matters most today?</p>
+        <div class="focus-input-wrap">
+          <input type="text" id="focus-input" class="focus-input" placeholder="Type your main focus…" maxlength="80" />
+          <button class="btn-primary" id="focus-save-btn">Set</button>
+        </div>
+        <p class="focus-display hidden" id="focus-display"></p>
+        <button class="btn-text hidden" id="focus-edit-btn">Edit focus</button>
+      </section>
+
+      <!-- To-Do List -->
+      <section class="card todo-card">
+        <div class="card-header">
+          <h2 class="card-title">To-Do List</h2>
+          <div class="todo-header-controls">
+            <!-- Sort -->
+            <select class="select-field compact" id="sort-select" title="Sort tasks">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="priority">Priority</option>
+              <option value="az">A → Z</option>
+              <option value="za">Z → A</option>
+            </select>
+            <!-- Status filter -->
+            <div class="todo-filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="active">Active</button>
+              <button class="filter-btn" data-filter="done">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="category-tabs">
+          <button class="cat-tab active" data-cat="all">All</button>
+          <button class="cat-tab" data-cat="personal">Personal</button>
+          <button class="cat-tab" data-cat="work">Work</button>
+          <button class="cat-tab" data-cat="health">Health</button>
+          <button class="cat-tab" data-cat="learning">Learning</button>
+        </div>
+
+        <!-- Add Task -->
+        <div class="add-task-bar">
+          <input type="text" class="input-field" id="task-input" placeholder="Add a new task…" maxlength="100" />
+          <select class="select-field" id="task-cat-select">
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+            <option value="health">Health</option>
+            <option value="learning">Learning</option>
+          </select>
+          <select class="select-field" id="task-priority-select">
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+          <button class="btn-primary" id="task-add-btn">Add</button>
+        </div>
+
+        <!-- Task List -->
+        <ul class="task-list" id="task-list"></ul>
+
+        <div class="todo-footer">
+          <span class="tasks-left" id="tasks-left"></span>
+          <button class="btn-text danger" id="clear-done-btn">Clear done</button>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ── RIGHT COLUMN ── -->
+    <aside class="right-col">
+
+      <!-- Quick Links -->
+      <section class="card links-card">
+        <div class="card-header">
+          <h2 class="card-title">Quick Links</h2>
+          <button class="btn-icon" id="add-link-btn" title="Add link">+</button>
+        </div>
+        <div class="links-grid" id="links-grid"></div>
+        <div class="add-form hidden" id="link-form">
+          <input type="text"  class="input-field" id="link-name"  placeholder="Label (e.g. Gmail)" maxlength="25" />
+          <input type="url"   class="input-field" id="link-url"   placeholder="https://…" />
+          <input type="text"  class="input-field" id="link-emoji" placeholder="Emoji icon (optional)" maxlength="4" />
+          <div class="form-actions">
+            <button class="btn-primary small" id="link-save-btn">Add</button>
+            <button class="btn-ghost   small" id="link-cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Goals -->
+      <section class="card goals-card">
+        <div class="card-header">
+          <h2 class="card-title">My Goals</h2>
+          <button class="btn-icon" id="add-goal-btn" title="Add goal">+</button>
+        </div>
+        <ul class="goal-list" id="goal-list"></ul>
+        <div class="add-form hidden" id="goal-form">
+          <input type="text"   class="input-field" id="goal-input"  placeholder="Goal name…" maxlength="60" />
+          <input type="number" class="input-field" id="goal-target" placeholder="Target (e.g. 30)" min="1" max="9999" />
+          <input type="text"   class="input-field" id="goal-unit"   placeholder="Unit (e.g. days, books)" maxlength="20" />
+          <div class="form-actions">
+            <button class="btn-primary small" id="goal-save-btn">Add</button>
+            <button class="btn-ghost   small" id="goal-cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notes -->
+      <section class="card notes-card">
+        <h2 class="card-title">Quick Notes</h2>
+        <textarea class="notes-area" id="notes-area" placeholder="Brain dump anything here… ideas, reminders, thoughts."></textarea>
+        <div class="notes-footer">
+          <span class="notes-saved" id="notes-saved"></span>
+          <span class="char-count"  id="char-count">0 / 500</span>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="card stats-card">
+        <h2 class="card-title">Your Stats</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-done">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-streak">0</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-habits">0</span>
+            <span class="stat-label">Habits Today</span>
+          </div>
+        </div>
+        <div class="weekly-bar" id="weekly-bar"></div>
+        <p class="weekly-label">Tasks completed — last 7 days</p>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
